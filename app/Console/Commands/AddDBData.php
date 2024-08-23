@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Weather;
 use App\Services\OpenWeatherApiService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class AddDBData extends Command
 {
@@ -44,5 +45,6 @@ class AddDBData extends Command
             'feels_like' => $weatherData['current_feels_like']
         ]);
         $this->info('Current weather data for ' . $city . ' has been added to the database.');
+        Log::info('Current weather data for ' . $city . ' has been added to the database.');
     }
 }
