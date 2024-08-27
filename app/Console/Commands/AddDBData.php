@@ -23,12 +23,12 @@ class AddDBData extends Command
      */
     protected $description = 'Command description';
 
-    protected OpenWeatherApiService $openWeather;
+    protected OpenWeatherApiService $openWeatherApi;
 
-    public function __construct(OpenWeatherApiService $openWeather)
+    public function __construct(OpenWeatherApiService $openWeatherApi)
     {
         parent::__construct();
-        $this->openWeather = $openWeather;
+        $this->openWeatherApi = $openWeatherApi;
     }
 
     /**
@@ -36,14 +36,28 @@ class AddDBData extends Command
      */
     public function handle(): void
     {
+        $this->info('Adding current weather data for the provided city to the database...');
+        Log::info('Adding current weather data for the provided city to the database...');
+
         $city = $this->argument('city');
-        $weatherData = $this->openWeather->getCurrentWeather($city);
+        $weatherData = $this->openWeatherApi->getCurrentWeather($city);
+
+        if ($weatherData === null) {
+            $this->error('City not found or API request failed.');
+            Log::error('City not found or API request failed.');
+            return;
+        }
+
         Weather::create([
             'condition' => $weatherData['current_condition'],
             'condition_description' => $weatherData['current_condition_description'],
             'temperature' => $weatherData['current_temperature'],
-            'feels_like' => $weatherData['current_feels_like']
+            'feels_like' => $weatherData['current_feels_like'],
+            'city' => $weatherData['current_city'],
+            'wind_speed' => $weatherData['current_wind_speed'],
+            'wind_deg' => $weatherData['current_wind_deg'],
         ]);
+
         $this->info('Current weather data for ' . $city . ' has been added to the database.');
         Log::info('Current weather data for ' . $city . ' has been added to the database.');
     }

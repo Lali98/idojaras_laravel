@@ -44,19 +44,24 @@ class OpenWeatherApiService
      * - 'current_condition_description': A detailed description of the weather condition.
      * - 'current_temperature': The current temperature.
      * - 'current_feels_like': The current temperature felt by humans.
+     * - 'current_city': The name of the city.
+     * - 'current_wind_speed': The current wind speed.
+     * - 'current_wind_deg': The current wind direction in degrees.
      */
     public function getCurrentWeather(string $city, ?string $units = 'metric'): array|null
     {
         $latLon = $this->getLatAndLon($city);
         if ($latLon !== null) {
-//            $response = Http::get("$this->baseUrl/data/2.5/weather?lat=$latLon->lat&lon=$latLon->lon&appid=$this->apiKey&units=$units");
             $response = Http::get("$this->baseUrl/data/2.5/weather", ['lat' => $latLon['lat'], 'lon' => $latLon['lon'], 'appid' => $this->apiKey, 'units' => $units]);
             if ($response != []) {
                 return [
                     'current_condition' => $response['weather'][0]['main'],
                     'current_condition_description' => $response['weather'][0]['description'],
                     'current_temperature' => $response['main']['temp'],
-                    'current_feels_like' => $response['main']['feels_like']
+                    'current_feels_like' => $response['main']['feels_like'],
+                    'current_city' => $response['name'],
+                    'current_wind_speed' => $response['wind']['speed'],
+                    'current_wind_deg' => $response['wind']['deg'],
                 ];
             }
             return null;

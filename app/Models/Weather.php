@@ -13,6 +13,9 @@ class Weather extends Model
         'condition',
         'condition_description',
         'temperature',
-        'feels_like'
+        'feels_like',
+        'city',
+        'wind_speed',
+        'wind_deg'
     ];
 }
